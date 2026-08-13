@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+
+      - name: Build binaries
+        run: |
+          mkdir -p dist
+          for os in linux darwin windows; do
+            for arch in amd64 arm64; do
+              name="cosh-${os}-${arch}"
+              [ "$os" = "windows" ] && name="${name}.exe"
+              GOOS=$os GOARCH=$arch go build -ldflags "-s -w" -o "dist/$name" .
+            done
+          done
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true

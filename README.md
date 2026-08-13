@@ -143,3 +143,16 @@ go vet ./...        # 静态检查
 ## 许可证
 
 [MIT](LICENSE)
+
+## 发布
+
+推送 `v*` 格式的 git tag 即自动触发 [Release workflow](.github/workflows/release.yml)，构建 6 个平台的二进制并发布到 [GitHub Releases](https://github.com/wangyi1310/cosh/releases)：
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+- 产物：`cosh-{linux,darwin,windows}-{amd64,arm64}[.exe]`
+- Release 说明基于提交记录自动生成，可稍后在 GitHub 页面手动编辑
+- 也支持在 Actions 页面手动触发（`workflow_dispatch`），不依赖 tag
